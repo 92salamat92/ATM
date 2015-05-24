@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="@dimen/add_menu_width"
+    android:layout_height="@dimen/add_menu_item_size"
+    android:textSize="17sp"
+    android:text="Salamat"
+    android:gravity="center_vertical"
+    android:paddingLeft="12dp"
+    android:textStyle="normal"
+    android:textAllCaps="false"
+    style="?android:listSeparatorTextViewStyle"
+    />

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ATM</string>
+    <string name="title_activity_maps">ATM</string>
+    <string name="GPS_enable">Включите GPS</string>
+    <string name="navigation_drawer_open">open</string>
+    <string name="navigation_drawer_close">close</string>
+    <string name="menu_select_bank">"Банки"</string>
+    <string name="menu_select_exchange_rates">"Курсы валют"</string>
+    <string name="menu_select_settings">"Настройки"</string>
+    <string name="update">Обновить</string>
+    <string name="GPS_settings">Настройки GPS</string>
+    <string name="about_program">О программе</string>
+    <string name="buy">покупка</string>
+    <string name="sell">продажа</string>
+    <string name="update_done">База обновлена!</string>
+    <string name="error_access_to_internet">Не возможно соединиться с сервером. Пожалуйста,убедитесь в наличии интернет соединения</string>
+    <string name="another_error">Возникла неизвестная ошибка!</string>
+    <string name="updated_ok">OK</string>
+    <string name="atms">Банкоматы</string>
+    <string name="branches">Филиалы</string>
+    <string name="add_menu_text">Оставить на карте:</string>
+    <string name="points_not_found">Не удалось найти точек</string>
+    <string name="bank_not_selected">Банк не выбран</string>
+    <string name="search_route">Идет поиск маршрута</string>
+    <string name="route_not_found">"Не найден маршрут"</string>
+    <string name="you_location_not_found">"Не удалось найти ваше местоположение!"</string>
+
+</resources>

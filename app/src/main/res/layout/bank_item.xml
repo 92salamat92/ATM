@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    style="?android:listSeparatorTextViewStyle">
+
+    <ImageView
+        android:id="@+id/bank_image"
+        android:layout_weight="2"
+        android:scaleType="fitXY"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/bank_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="25sp"
+            android:gravity="left|center_vertical"
+            android:layout_marginLeft="20dp"
+            android:text="adadad"
+            />
+    </RelativeLayout>
+
+
+</LinearLayout>
