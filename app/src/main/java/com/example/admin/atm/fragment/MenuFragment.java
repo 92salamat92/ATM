@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.admin.atm.Constants;
 import com.example.admin.atm.ExchangeRatesActivity;
 import com.example.admin.atm.R;
 import com.example.admin.atm.SelectBankActivity;
@@ -32,14 +31,12 @@ public class MenuFragment extends Fragment {
 
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private int mCurrentSelectedPosition = 0;
-
     private View mFragmentContainerView;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
     private ListView mMenuListView;
-
 
 
     @Override
@@ -75,7 +72,7 @@ public class MenuFragment extends Fragment {
         List<Menu> menu_list_title=new ArrayList<>();
         menu_list_title.add(new Menu(getString(R.string.menu_select_bank),getResources().getDrawable(R.drawable.bank)));
         menu_list_title.add(new Menu(getString(R.string.menu_select_exchange_rates),getResources().getDrawable(R.drawable.exc_rates)));
-        menu_list_title.add(new Menu(getString(R.string.menu_select_settings),getResources().getDrawable(R.drawable.settings_icon3)));
+        menu_list_title.add(new Menu(getString(R.string.menu_select_settings),getResources().getDrawable(R.drawable.settings_icon1)));
 
         MenuListAdapter menuListAdapterListAdapter = new MenuListAdapter(getActivity(),menu_list_title);
         mMenuListView.setAdapter(menuListAdapterListAdapter);

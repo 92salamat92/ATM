@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:background="@android:color/holo_blue_light"
-    android:layout_height="210dp">
+    android:layout_height="205dp"
+    android:background="@drawable/list">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
-        android:background="@android:color/holo_blue_dark"
-        android:layout_marginBottom="5dp">
+        android:background="#C1C1C1"
+        android:layout_marginBottom="5dp"
+        >
 
         <TextView
             android:id="@+id/bank_name_exch_rates"
@@ -18,10 +19,19 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:textSize="22sp"
-            android:textStyle="italic"
-            android:textColor="@android:color/holo_red_dark"
+            android:paddingLeft="10dp"
+            android:textSize="15sp"
+            android:textColor="#656565"
             />
+
+        <TextView
+            android:id="@+id/exc_rates_time"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="10 июня 2015г"
+            android:paddingRight="10dp"
+            android:gravity="center"/>
 
     </LinearLayout>
 
@@ -35,7 +45,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="27dp"
+            android:layout_height="18dp"
             android:orientation="horizontal"
             android:layout_marginBottom="3dp">
             <ImageView
@@ -49,8 +59,9 @@
                 android:layout_weight="3"
                 android:text="@string/buy"
                 android:gravity="center"
-                android:textStyle="bold|italic"
-                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#3E3E3E"
                 />
             <TextView
                 android:layout_width="match_parent"
@@ -58,8 +69,9 @@
                 android:layout_weight="3"
                 android:text="@string/sell"
                 android:gravity="center"
-                android:textStyle="bold|italic"
-                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:textColor="#3E3E3E"
                 />
         </LinearLayout>
 
@@ -82,7 +94,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
             <TextView
                 android:id="@+id/dollar_sell"
@@ -90,7 +103,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
         </LinearLayout>
 
@@ -113,7 +127,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
             <TextView
                 android:id="@+id/euro_sell"
@@ -121,7 +136,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
         </LinearLayout>
 
@@ -142,7 +158,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
             <TextView
                 android:id="@+id/ruble_sell"
@@ -150,7 +167,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
         </LinearLayout>
 
@@ -171,7 +189,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
             <TextView
                 android:id="@+id/tenge_sell"
@@ -179,11 +198,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textColor="#3E3E3E"
                 />
         </LinearLayout>
-
-
     </LinearLayout>
-
 </LinearLayout>

@@ -3,12 +3,13 @@ package com.example.admin.atm;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.admin.atm.adapters.ExchangeRatesListAdapter;
 import com.example.admin.atm.models.Exchange_Rates;
+import com.twotoasters.jazzylistview.JazzyListView;
+import com.twotoasters.jazzylistview.effects.SlideInEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,7 @@ import retrofit.client.Response;
  * Created by Admin on 28.04.2015.
  */
 public class ExchangeRatesActivity extends Activity {
-    private ListView listView_exc_rates;
+    private JazzyListView listView_exc_rates;
     private List<Exchange_Rates> list_exc_rates;
     private ProgressBar progressbar_exc_rates;
 
@@ -30,7 +31,8 @@ public class ExchangeRatesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exchange_rates);
 
-        listView_exc_rates=(ListView)findViewById(R.id.list_exchange_rates);
+        listView_exc_rates=(JazzyListView)findViewById(R.id.list_exchange_rates);
+        listView_exc_rates.setTransitionEffect(new SlideInEffect());
         progressbar_exc_rates=(ProgressBar)findViewById(R.id.progressbar_exc_rates);
 
         list_exc_rates=new ArrayList<>();
@@ -53,7 +55,7 @@ public class ExchangeRatesActivity extends Activity {
             @Override
             public void failure(RetrofitError error) {
                 if (error.isNetworkError()){
-                    Toast.makeText(ExchangeRatesActivity.this,"Нет интернет соединения",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ExchangeRatesActivity.this,R.string.no_internet_connection,Toast.LENGTH_SHORT).show();
                 }
                 else
                 {

@@ -13,8 +13,8 @@
     <ImageView
         android:id="@+id/menu_image"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
-        android:background="@drawable/menu"
+        android:layout_height="135dp"
+        android:background="@drawable/menu_image"
         android:scaleType="fitXY"
         >
     </ImageView>

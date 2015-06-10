@@ -10,9 +10,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +19,7 @@ import com.example.admin.atm.dialog.DialogRoute;
 import com.example.admin.atm.dialog.DialogSearch;
 import com.example.admin.atm.fragment.MenuFragment;
 import com.example.admin.atm.models.Bank;
+import com.example.admin.atm.models.MyItem;
 import com.example.admin.atm.models.Point;
 import com.example.admin.atm.models.Route;
 import com.example.admin.atm.models.RouteResponse;
@@ -36,6 +36,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.maps.android.PolyUtil;
+import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,9 +46,12 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class MainActivity extends FragmentActivity {
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private GoogleMap mMap;
     private LatLng LOCATION_BISHKEK_CENTER=new LatLng(42.871909, 74.611501);
     private MenuFragment menuFragment;
+    private ImageButton filter_button;
+    private TextView bank_name;
+    private TextView route_nearest;
     private Route route;
     private long minDistance=10000000;
     private int countSuccess=0;
@@ -58,8 +62,8 @@ public class MainActivity extends FragmentActivity {
     public Bank selectedBank;
     public List<Point> bank_points;
     public List<Point> filtered_points;
-    private ImageView menu_image;
     private Polyline line;
+    private ClusterManager<MyItem> mClusterManager;
 
     DialogSearch dialogSearch=new DialogSearch();
 
@@ -69,11 +73,27 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         menuFragment  = (MenuFragment) getSupportFragmentManager().findFragmentById(R.id.menu);
         menuFragment.setUp(R.id.menu,(DrawerLayout) findViewById(R.id.drawer_layout));
-        menu_image=(ImageView)findViewById(R.id.menu_image);
+        bank_name=(TextView)findViewById(R.id.main_bank_name);
+        route_nearest=(TextView)findViewById(R.id.main_route);
+
+        filter_button=(ImageButton)findViewById(R.id.filter_button);
+        filter_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(selectedBank!=null) {
+                    DialogRoute progress = new DialogRoute();
+                    progress.show(getFragmentManager(), "progress");
+                }
+                else
+                    Toast.makeText(MainActivity.this,R.string.bank_not_selected,Toast.LENGTH_SHORT).show();
+            }
+        });
 
         mSharedPreferences = getSharedPreferences(Constants.SETTINGS, Context.MODE_PRIVATE);
-        mSharedPreferences.edit().putBoolean(Constants.CHECKED_BRANCHES,true).commit();
-        mSharedPreferences.edit().putBoolean(Constants.CHECKED_ATMS,true).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_SATELLITE,false).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_BRANCHES,true).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_ATMS,true).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_NEAREST,false).commit();
     }
 
     @Override
@@ -104,48 +124,51 @@ public class MainActivity extends FragmentActivity {
             mMap.getUiSettings().setMapToolbarEnabled(false);
             CameraUpdate update=CameraUpdateFactory.newLatLngZoom(LOCATION_BISHKEK_CENTER,14);
             mMap.animateCamera(update);
-            mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+
+            /*mClusterManager = new ClusterManager<MyItem>(this, mMap);
+
+            mClusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<MyItem>() {
                 @Override
-                public void onMapLongClick(LatLng latLng) {
-                    if(selectedBank!=null) {
-                        DialogRoute progress = new DialogRoute();
-                        progress.show(getFragmentManager(), "progress");
-                    }
-                    else
-                        Toast.makeText(MainActivity.this,R.string.bank_not_selected,Toast.LENGTH_SHORT).show();
+                public boolean onClusterItemClick(MyItem myItem) {
+                    Toast.makeText(MainActivity.this,myItem.getPosition().toString(),Toast.LENGTH_SHORT).show();
+                    return true;
                 }
-            });
+            });*/
         } else setUpMap();
     }
 
     public Bitmap bitmapCompression(Bitmap source){
-        if(source.getHeight()>100||source.getWidth()>100) {
-            int nh = (int) (source.getHeight() * (75.0 / source.getWidth()));
-            return Bitmap.createScaledBitmap(source, 75, nh, true);
+        if(source.getHeight()>720||source.getWidth()>1280) {
+            int nh = (int) (source.getHeight() * (100.0 / source.getWidth()));
+            return Bitmap.createScaledBitmap(source, 100, nh, true);
+        }else {
+            int nh = (int) (source.getHeight() * (65.0 / source.getWidth()));
+            return Bitmap.createScaledBitmap(source, 65, nh, true);
         }
-        return source;
+        //return source;
     }
 
     public void setUpMap() {
-
         if(mSharedPreferences.getBoolean(Constants.UPDATE_DONE,false)){
+            bank_name.setText("");
             clearMap();
+            clearRoute();
             mSharedPreferences.edit().putBoolean(Constants.UPDATE_DONE,false).commit();
         }
         getSelectedBank();
         if(selectedBank!=null && selected_bank_changed){
+            bank_name.setText(selectedBank.name);
+            clearRoute();
             mSharedPreferences.edit().putBoolean(Constants.SELECTED_BANK_CHANGED,false).commit();
             drawPoints(filterPoint());
-
-            //Toast.makeText(MainActivity.this, "Долгий тап для доп.меню", Toast.LENGTH_LONG).show();
-
-            /*if(selectedBank.imageUrl!=null || selectedBank.imageUrl!="none"){
-                Picasso.with(this).load(selectedBank.imageUrl).into(menu_image);
-            }*/
         }
     }
 
-    public Boolean locationIsFounded(){
+    public void setSatellite(boolean mapType){
+        if (mapType)mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);else mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+    }
+
+    public boolean locationIsFounded(){
         if(mMap.getMyLocation()!=null) return true;
         else Toast.makeText(MainActivity.this,R.string.you_location_not_found, Toast.LENGTH_SHORT).show();
         return false;
@@ -154,14 +177,14 @@ public class MainActivity extends FragmentActivity {
     public List<Point> filterPoint(){
         bank_points = (selectedBank.points);
         filtered_points=new ArrayList<>();
-        Boolean checked_branches=mSharedPreferences.getBoolean(Constants.CHECKED_BRANCHES,false);
-        Boolean checked_atms=mSharedPreferences.getBoolean(Constants.CHECKED_ATMS,false);
+        Boolean switched_branches=mSharedPreferences.getBoolean(Constants.SWITCHED_BRANCHES,false);
+        Boolean switched_atms=mSharedPreferences.getBoolean(Constants.SWITCHED_ATMS,false);
         for(int i=0;i<bank_points.size();i++){
-            if(checked_branches){
-                if(bank_points.get(i).type.toString().equals("bank"))filtered_points.add(bank_points.get(i));
+            if(switched_branches){
+                if(bank_points.get(i).type.equals("bank"))filtered_points.add(bank_points.get(i));
             }
-            if(checked_atms){
-                if(bank_points.get(i).type.toString().equals("atm"))filtered_points.add(bank_points.get(i));
+            if(switched_atms){
+                if(bank_points.get(i).type.equals("atm"))filtered_points.add(bank_points.get(i));
             }
         }
         return filtered_points;
@@ -196,7 +219,10 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void foundNearestPoint(final List<Point> top5Points){
-        if(top5Points.size()==0) Toast.makeText(MainActivity.this,R.string.points_not_found,Toast.LENGTH_SHORT).show();
+        if(top5Points.size()==0) {
+            clearRouteText();
+            Toast.makeText(MainActivity.this,R.string.points_not_found,Toast.LENGTH_SHORT).show();
+        }
         else {
             dialogSearch.show(getFragmentManager(), "progress1");
             String origin = mMap.getMyLocation().getLatitude() + "," + mMap.getMyLocation().getLongitude();
@@ -227,6 +253,8 @@ public class MainActivity extends FragmentActivity {
                             } else if (countSuccess == 5 || countSuccess == bank_points.size()) {
                                 countSuccess = 0;
                                 dialogSearch.dismiss();
+                                clearRouteText();
+                                clearRoute();
                                 Toast.makeText(MainActivity.this,R.string.route_not_found, Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -239,9 +267,9 @@ public class MainActivity extends FragmentActivity {
                             if (countSuccess == 5 || countSuccess == bank_points.size()) {
                                 countSuccess = 0;
                                 dialogSearch.dismiss();
-                                Toast.makeText(MainActivity.this, R.string.error_access_to_internet, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                             }
-                        }
+                        }else  Toast.makeText(MainActivity.this, R.string.another_error_nearest, Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -259,31 +287,27 @@ public class MainActivity extends FragmentActivity {
                 {
                     bmp_marker = BitmapFactory.decodeResource(getResources(), R.drawable.marker2);
                 }
-
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(list_filtered.get(i).lat, list_filtered.get(i).lng))
                         .title(selectedBank.name)
-                        .snippet(bank_points.get(i).name)
+                        .snippet(list_filtered.get(i).name)
                         .icon(BitmapDescriptorFactory.fromBitmap(bitmapCompression(bmp_marker))));
                 mMap.setInfoWindowAdapter(new MyCustomInfoWindowAdapter());
+
+                /*final MyItem offsetItem = new MyItem(list_filtered.get(i).lat, list_filtered.get(i).lng);
+                mClusterManager.addItem(offsetItem);
+                mMap.setOnCameraChangeListener(mClusterManager);*/
+
             }
-        }
-    }
-
-    public void clearMap(){
-        mMap.clear();
-    }
-
-    public void clearRoute(){
-        if(line!=null ){
-            line.remove();
-            minDistance=10000000;
         }
     }
 
     private void drawNearestRoute() {
         if(route.points!=null){
             clearRoute();
+            if(route.distanceValue>=1000)route_nearest.setText("до ближайшего: "+String.format("%.2f", route.distanceValue / 1000.0)+"км");
+            else route_nearest.setText("до ближайшего: "+route.distanceValue.toString()+"м");
+
             PolylineOptions polylineOptions = new PolylineOptions();
             polylineOptions.width(5f).color(Color.RED);
             LatLngBounds.Builder latLngBuilder = new LatLngBounds.Builder();
@@ -300,9 +324,25 @@ public class MainActivity extends FragmentActivity {
             mMap.moveCamera(nearestRoute);
         }else
         {
-            Toast.makeText(MainActivity.this,"Не найдено!",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this,R.string.route_not_found,Toast.LENGTH_SHORT).show();
+            clearRouteText();
         }
+    }
 
+    public void clearMap(){
+        mMap.clear();
+    }
+
+    public void clearRoute(){
+        clearRouteText();
+        if(line!=null ){
+            line.remove();
+            minDistance=10000000;
+        }
+    }
+
+    private void clearRouteText(){
+        route_nearest.setText("");
     }
 
     class MyCustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -365,6 +405,5 @@ public class MainActivity extends FragmentActivity {
                 })
                 .setNegativeButton("Нет", null)
                 .show();
-
     }
 }

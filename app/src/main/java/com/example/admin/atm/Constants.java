@@ -12,8 +12,10 @@ public final class Constants {
     public static final String BANKS_COUNT = "banksCount";
     public static final String SELECTED_BANK = "selected bank";
     public static final String SELECTED_BANK_CHANGED = "selected_bank_changed";
-    public static final String CHECKED_BRANCHES = "checkhed_branches";
-    public static final String CHECKED_ATMS = "checkhed_atms";
+    public static final String SWITCHED_SATELLITE = "switched_satellite";
+    public static final String SWITCHED_BRANCHES = "switched_branches";
+    public static final String SWITCHED_ATMS = "switched_atms";
+    public static final String SWITCHED_NEAREST = "switched_nearest";
     public static final String UPDATE_DONE = "update_done";
 
     public static final RestAdapter RestAdapter(){

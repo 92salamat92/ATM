@@ -16,15 +16,20 @@
     <string name="sell">продажа</string>
     <string name="update_done">База обновлена!</string>
     <string name="error_access_to_internet">Не возможно соединиться с сервером. Пожалуйста,убедитесь в наличии интернет соединения</string>
-    <string name="another_error">Возникла неизвестная ошибка!</string>
+    <string name="another_error">Не удалось обновить! Возникла неизвестная ошибка!</string>
     <string name="updated_ok">OK</string>
     <string name="atms">Банкоматы</string>
     <string name="branches">Филиалы</string>
     <string name="add_menu_text">Оставить на карте:</string>
     <string name="points_not_found">Не удалось найти точек</string>
     <string name="bank_not_selected">Банк не выбран</string>
+    <string name="no_internet_connection">Нет интернет соединения</string>
+    <string name="another_error_nearest">Не удалось найти ближайший!</string>
     <string name="search_route">Идет поиск маршрута</string>
     <string name="route_not_found">"Не найден маршрут"</string>
     <string name="you_location_not_found">"Не удалось найти ваше местоположение!"</string>
+    <string name="find_the_nearest">Найти ближайший</string>
+    <string name="banks_of_kyrgyzstan">Банки Кыргызстана:</string>
+    <string name="satellite">Спутник</string>
 
 </resources>

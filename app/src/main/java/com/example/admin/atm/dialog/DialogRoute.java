@@ -14,12 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
+import android.widget.Switch;
+
 import com.example.admin.atm.Constants;
 import com.example.admin.atm.MainActivity;
 import com.example.admin.atm.R;
@@ -27,13 +25,19 @@ import com.example.admin.atm.R;
 
 public class DialogRoute extends DialogFragment {
     public SharedPreferences mSharedPreferences;
-    private ListView list_route;
-    private CheckBox checkbox_branches;
-    private CheckBox checkbox_atms;
-    private boolean check_branches;
-    private boolean check_atms;
-    private boolean check_branches_first;
-    private boolean check_atms_first;
+    private Switch switch_branches;
+    private Switch switch_atms;
+    private Switch switch_nearest;
+    private Switch switch_satellite;
+
+    private boolean switched_satellite;
+    private boolean switched_branches;
+    private boolean switched_atms;
+    private boolean switched_nearest;
+    private boolean switched_satellite_first;
+    private boolean switched_branches_first;
+    private boolean switched_atms_first;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,85 +57,100 @@ public class DialogRoute extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.add_menu_dialog,container,false);
-        getChecked();
-        check_branches_first=check_branches;
-        check_atms_first=check_atms;
+        View view = inflater.inflate(R.layout.settings_dialog,container,false);
+        getSwitched();
+        switched_branches_first=switched_branches;
+        switched_atms_first=switched_atms;
+        switched_satellite_first=switched_satellite;
 
-        checkbox_branches=(CheckBox)view.findViewById(R.id.checkbox_branches);
-        checkbox_branches.setChecked(check_branches);
-        checkbox_branches.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switch_satellite=(Switch)view.findViewById(R.id.switch_satellite);
+        switch_satellite.setChecked(switched_satellite);
+        switch_satellite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                check_branches=isChecked;
+                switched_satellite=isChecked;
             }
         });
 
-        checkbox_atms=(CheckBox)view.findViewById(R.id.checkbox_atms);
-        checkbox_atms.setChecked(check_atms);
-        checkbox_atms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        switch_branches=(Switch)view.findViewById(R.id.switch_brances);
+        switch_branches.setChecked(switched_branches);
+        switch_branches.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                check_atms=isChecked;
+                switched_branches=isChecked;
             }
         });
 
-        list_route=(ListView)view.findViewById(R.id.list_add_menu);
-        list_route.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        switch_atms=(Switch)view.findViewById(R.id.switch_atms);
+        switch_atms.setChecked(switched_atms);
+        switch_atms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                switched_atms=isChecked;
             }
         });
-        String[] items = {
-                "найти ближайший",
-                "очистить маршрут",
-        };
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),R.layout.add_menu_item, items);
-        list_route.setAdapter(adapter);
+
+        switch_nearest=(Switch)view.findViewById(R.id.switch_nearest);
+        switch_nearest.setChecked(switched_nearest);
+        switch_nearest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                switched_nearest = isChecked;
+            }
+        });
 
         Button button=(Button)view.findViewById(R.id.button_add_menu);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isFirstChecked(check_branches,check_atms);
-                setChecked(check_branches,check_atms);
-                ((MainActivity)getActivity()).setUpMap();
+                if(isFirstSwitchedSatellite(switched_satellite))((MainActivity) getActivity()).setSatellite(switched_satellite);
+                isFirstSwitched(switched_branches, switched_atms);
+                setSwitch(switched_satellite,switched_branches, switched_atms, switched_nearest);
+
+                ((MainActivity) getActivity()).setUpMap();
+                if(switched_nearest) {
+                    if (((MainActivity) getActivity()).locationIsFounded()) {
+                        ((MainActivity) getActivity()).foundNearestPoint(((MainActivity) getActivity()).getTop5(((MainActivity) getActivity()).filterPoint()));
+                    }
+                }else((MainActivity) getActivity()).clearRoute();
                 finish();
             }
         });
         return view;
     }
 
-    private void isFirstChecked(boolean isCheckedBranches,boolean isCheckedAtms){
-        if(check_branches_first!=isCheckedBranches || check_atms_first!=isCheckedAtms)mSharedPreferences.edit().putBoolean(Constants.SELECTED_BANK_CHANGED,true).commit();
+    private boolean isFirstSwitchedSatellite(boolean isSwitchedSatellite){
+        if(switched_satellite_first!=isSwitchedSatellite)return true;
+        return false;
     }
 
-    private void getChecked(){
-        check_branches=mSharedPreferences.getBoolean(Constants.CHECKED_BRANCHES,false);
-        check_atms=mSharedPreferences.getBoolean(Constants.CHECKED_ATMS,false);
+    private void isFirstSwitched(boolean isSwitchedBranches,boolean isSwitchedAtms){
+        if(switched_branches_first!=isSwitchedBranches || switched_atms_first!=isSwitchedAtms)mSharedPreferences.edit().putBoolean(Constants.SELECTED_BANK_CHANGED,true).commit();
     }
 
-    private void setChecked(boolean isCheckedBranches,boolean isCheckedAtms){
-        mSharedPreferences.edit().putBoolean(Constants.CHECKED_BRANCHES, isCheckedBranches).commit();
-        mSharedPreferences.edit().putBoolean(Constants.CHECKED_ATMS,isCheckedAtms).commit();
+    private void getSwitched(){
+        switched_satellite=mSharedPreferences.getBoolean(Constants.SWITCHED_SATELLITE,false);
+        switched_branches=mSharedPreferences.getBoolean(Constants.SWITCHED_BRANCHES,false);
+        switched_atms=mSharedPreferences.getBoolean(Constants.SWITCHED_ATMS,false);
+        switched_nearest=mSharedPreferences.getBoolean(Constants.SWITCHED_NEAREST,false);
     }
 
+    private void setSwitch(boolean isSwitchedSatellite,boolean isSwitchedBranches,boolean isSwitchedAtms,boolean isSwitchedNearest){
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_SATELLITE, isSwitchedSatellite).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_BRANCHES, isSwitchedBranches).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_ATMS,isSwitchedAtms).commit();
+        mSharedPreferences.edit().putBoolean(Constants.SWITCHED_NEAREST,isSwitchedNearest).commit();
+    }
 
-    private void selectItem(int position){
-        switch(position){
-            case 0:
-                isFirstChecked(check_branches,check_atms);
-                setChecked(check_branches,check_atms);
-                ((MainActivity) getActivity()).setUpMap();
-                if(((MainActivity)getActivity()).locationIsFounded()) {
-                    ((MainActivity) getActivity()).foundNearestPoint(((MainActivity) getActivity()).getTop5(((MainActivity) getActivity()).filterPoint()));
-                }
-                finish();
-            case 1:
-                ((MainActivity)getActivity()).clearRoute();
-                finish();
-        }
+    @Override
+    public void onResume() {
+        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener()
+        {
+            @Override
+            public boolean onKey(android.content.DialogInterface dialog, int keyCode,android.view.KeyEvent event) {
+                if (keyCode ==  android.view.KeyEvent.KEYCODE_BACK) return true; else return false;}
+        });
+        super.onResume();
     }
 
     private void finish() {

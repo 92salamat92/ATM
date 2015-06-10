@@ -29,16 +29,6 @@ public class DialogSearch extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
-    @Override
-    public void onResume() {
-        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener()
-        {
-            @Override
-            public boolean onKey(android.content.DialogInterface dialog, int keyCode,android.view.KeyEvent event) {
-                if (keyCode ==  android.view.KeyEvent.KEYCODE_BACK) return true; else return false;}
-        });
-        super.onResume();
-    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
