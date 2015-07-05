@@ -138,12 +138,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     public Bitmap bitmapCompression(Bitmap source){
-        if(source.getHeight()>720||source.getWidth()>1280) {
-            int nh = (int) (source.getHeight() * (100.0 / source.getWidth()));
-            return Bitmap.createScaledBitmap(source, 100, nh, true);
+        if(source.getHeight()>=720||source.getWidth()>=1280) {
+            int nh = (int) (source.getHeight() * (80.0 / source.getWidth()));
+            return Bitmap.createScaledBitmap(source, 80, nh, true);
         }else {
-            int nh = (int) (source.getHeight() * (65.0 / source.getWidth()));
-            return Bitmap.createScaledBitmap(source, 65, nh, true);
+            int nh = (int) (source.getHeight() * (50.0 / source.getWidth()));
+            return Bitmap.createScaledBitmap(source, 50, nh, true);
         }
         //return source;
     }
@@ -282,10 +282,10 @@ public class MainActivity extends FragmentActivity {
         if(list_filtered!=null){
             for (int i = 0; i < list_filtered.size(); i++) {
                 if(list_filtered.get(i).type.toString().equals("atm")){
-                    bmp_marker = BitmapFactory.decodeResource(getResources(), R.drawable.marker1);
+                    bmp_marker = BitmapFactory.decodeResource(getResources(), R.drawable.marker_atm);
                 }else
                 {
-                    bmp_marker = BitmapFactory.decodeResource(getResources(), R.drawable.marker2);
+                    bmp_marker = BitmapFactory.decodeResource(getResources(), R.drawable.marker_branches);
                 }
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(list_filtered.get(i).lat, list_filtered.get(i).lng))

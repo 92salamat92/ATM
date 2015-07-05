@@ -134,7 +134,7 @@ public class DialogUpdate extends DialogFragment {
         editor.clear();
 
         editor.putInt(Constants.BANKS_COUNT, banks.size());
-        editor.putString(Constants.SELECTED_BANK,null);
+        editor.putString(Constants.SELECTED_BANK, null);
         editor.putBoolean(Constants.SELECTED_BANK_CHANGED, false);
         editor.putBoolean(Constants.SWITCHED_BRANCHES,true);
         editor.putBoolean(Constants.SWITCHED_ATMS,true);

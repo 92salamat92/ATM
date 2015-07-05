@@ -2,7 +2,6 @@ package com.example.admin.atm.dialog;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ProgressBar;
 
-import com.example.admin.atm.MainActivity;
 import com.example.admin.atm.R;
 
 /**
